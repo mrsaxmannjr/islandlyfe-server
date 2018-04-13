@@ -1,38 +1,33 @@
-let express = require('express');
-let path = require('path');
-let logger = require('morgan');
-let cookieParser = require('cookie-parser');
-let bodyParser = require('body-parser');
+const express = require('express');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
-let index = require('./routes/index');
-let users = require('./routes/users');
-
-let app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/', index);
-app.use('/users', users);
+app.get('/', (req, res) => {
+  res.json({
+    message: 'YO DAWG!',
+  });
+});
 
-// catch 404 and forward to error handler
 app.use((req, res, next) => {
-  var err = new Error('Not Found');
-  err.status = 404;
+  const err = new Error('Not Found');
+  res.status = (404);
   next(err);
 });
 
-// error handler
 app.use((err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(res.statusCode || 500);
+  res.json({
+    message: err.message,
+    stack: req.app.get('env') === 'development' ? err.stack : {},
+  });
 });
 
 module.exports = app;
